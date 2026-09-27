@@ -1,0 +1,34 @@
+name: Mass Fetch Genshin Data
+
+on:
+  workflow_dispatch: # Ye button dega jisse tum manually run kar sako
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run Fetch Script
+        run: python fetch_all_data.py
+
+      - name: Commit and Push Data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add genshin_wiki_data/
+          git commit -m "Auto-fetched Genshin Lore Data" || echo "No changes to commit"
+          git push
